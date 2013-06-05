@@ -19,6 +19,15 @@ public class IPSubCalc {
         }
         return one;
     }
+    public static String join(String[] s, String delim) {
+      if (s.length==0) return null;
+      String out= s[0];
+      for (int x=1;x<s.length;++x){
+          out += delim;
+          out +=s[x];
+      }
+      return out;
+    }    
     public static byte writeByByte(int a) {
         switch(a){
             case 1:
@@ -63,7 +72,7 @@ public class IPSubCalc {
                 return 0;
         }
     }
-    public static byte[] writeByNum(int a) {
+    public static byte[] writeByBits(int a) {
         int retLen = (int) Math.ceil((double)a/(double)8);
         System.out.println(retLen);
         byte[] ret = new byte[retLen+1];
@@ -75,7 +84,7 @@ public class IPSubCalc {
         }
         return ret;
     }
-    public static int countByBytes(byte[] arr) {
+    public static int countBits(byte[] arr) {
         int ret = 0;
         for(int i=0; i < arr.length; i++){
             ret += writeFromByte(arr[i]);
@@ -99,13 +108,26 @@ public class IPSubCalc {
         return getNetworkAddressByteWise(addr.getAddress(), netmask);        
     }
     public static InetAddress getNetworkAddress(InetAddress addr, int netmask) {        
-        return getNetworkAddressByteWise(addr.getAddress(), writeByNum(netmask));        
+        return getNetworkAddressByteWise(addr.getAddress(), writeByBits(netmask));        
+    }
+    public static int getNetMaskBits(String mask) {
+        String[] arr = mask.split("\\.");
+        int[] arrint = new int[arr.length];
+        for(int i = 0; i < arr.length; i++) arrint[i] = Integer.parseInt(arr[i]);
+        byte[] arrbyte = new byte[arr.length];
+        for(int i = 0; i < arr.length; i++) arrbyte[i] = (byte) arrint[i];
+        return countBits(arrbyte);
+    }
+    public static String genNetMaskBits(int bits){
+        byte[] netmask = writeByBits(bits);
+        int[] netmaskint = new int[netmask.length];
+        for(int i = 0; i < netmask.length; i++) netmaskint[i] = (int)netmask[i]&0xFF;
+        String[] netmaskstr = new String[netmask.length];
+        for(int i = 0; i < netmask.length; i++) netmaskstr[i] = Integer.toString(netmaskint[i]);  
+        return join(netmaskstr, ".");        
     }
     public static void main(String[] args) {
-        try {
-            System.out.println(getNetworkAddress(InetAddress.getByName("192.168.33.1"), 22));
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(IPSubCalc.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            System.out.println(getNetMaskBits("255.255.255.128"));
+
     }
 }
