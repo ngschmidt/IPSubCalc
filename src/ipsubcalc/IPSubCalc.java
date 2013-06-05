@@ -41,6 +41,28 @@ public class IPSubCalc {
                 return (byte) 0;
         }
     }
+    public static int writeFromByte(byte a) {
+        switch((int)a&0xFF){
+            case 128:
+                return 1;
+            case 192:
+                return 2;
+            case 224:
+                return 3;
+            case 240:
+                return 4;
+            case 248:
+                return 5;
+            case 252:
+                return 6;
+            case 254:
+                return 7;
+            case 255:
+                return 8;
+            default:
+                return 0;
+        }
+    }
     public static byte[] writeByNum(int a) {
         int retLen = (int) Math.ceil((double)a/(double)8);
         System.out.println(retLen);
@@ -50,6 +72,13 @@ public class IPSubCalc {
                 ret[i] = writeByByte(8);
                 a -=8;
             } else ret[i] = writeByByte(a%8);
+        }
+        return ret;
+    }
+    public static int countByBytes(byte[] arr) {
+        int ret = 0;
+        for(int i=0; i < arr.length; i++){
+            ret += writeByByte()
         }
         return ret;
     }
