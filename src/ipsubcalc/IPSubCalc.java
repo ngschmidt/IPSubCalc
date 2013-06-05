@@ -5,7 +5,7 @@
 package ipsubcalc;
 
 /**
- *
+ *test
  * @author G89390
  */
 public class IPSubCalc {
