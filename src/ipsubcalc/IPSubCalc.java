@@ -78,7 +78,7 @@ public class IPSubCalc {
     public static int countByBytes(byte[] arr) {
         int ret = 0;
         for(int i=0; i < arr.length; i++){
-            ret += writeByByte()
+            ret += writeFromByte(arr[i]);
         }
         return ret;
     }
