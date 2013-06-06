@@ -35,6 +35,12 @@ public class IPSubCalc {
         }
         return one;
     }
+    public static byte[] bitwiseInvert(byte[] in) {
+        for(int i = 0; i < in.length; i++) {
+            in[i] ^= 0xFF;
+        }
+        return in;        
+    }
     public static String join(String[] s, String delim) {
       if (s.length==0) return null;
       String out= s[0];
@@ -114,20 +120,23 @@ public class IPSubCalc {
         for(int i = 0; i < a.length; i++)
             System.out.println(Integer.toHexString(a[i]&0xFF));        
     }
-    public static InetAddress getNetworkAddressByteWise(byte[] addr, byte[] netmask) {
+
+    public static byte[] getNetworkAddressBytes(byte[] addr, byte[] netmask) {
+        return bitwiseAnd(addr, netmask);
+    }
+    public static InetAddress getNetworkAddress(byte[] addr, byte[] netmask) {
         try {
-            printBytes(bitwiseAnd(addr, netmask));
             return InetAddress.getByAddress(bitwiseAnd(addr, netmask));
         } catch (UnknownHostException ex) {
             Logger.getLogger(IPSubCalc.class.getName()).log(Level.SEVERE, null, ex);
         }
         return InetAddress.getLoopbackAddress();
-    }
+    }    
     public static InetAddress getNetworkAddress(InetAddress addr, byte[] netmask) {
-        return getNetworkAddressByteWise(addr.getAddress(), netmask);        
+        return getNetworkAddress(addr.getAddress(), netmask);        
     }
     public static InetAddress getNetworkAddress(InetAddress addr, int netmask) {        
-        return getNetworkAddressByteWise(addr.getAddress(), writeByBits(netmask));        
+        return getNetworkAddress(addr.getAddress(), writeByBits(netmask));        
     }
     public static int getNetMaskBits(String mask) {
         String[] arr = mask.split("\\.");
@@ -158,8 +167,23 @@ public class IPSubCalc {
         return writeByBits(bits);      
     }
     public static byte[] getNetBroadcastByteWise(byte[] addr, byte[] mask) {
-        InetAddress ret = getNetworkAddressByteWise(addr, mask);
-        return ret.getAddress();
+        byte[] ret = getNetworkAddressBytes(addr, mask);
+        byte[] cmp = bitwiseInvert(mask);
+        return bitwiseOR(ret, cmp);
+    }
+    public static InetAddress getNetBroadcast(byte[] addr, byte[] mask) {
+        try {
+            return InetAddress.getByAddress(getNetBroadcastByteWise(addr, mask));
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(IPSubCalc.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return InetAddress.getLoopbackAddress();
+    }
+    public static InetAddress getNetBroadcast(InetAddress addr, byte[] mask) {
+        return getNetBroadcast(addr.getAddress(), mask);
+    }
+    public static InetAddress getNetBroadcast(InetAddress addr, int mask) {
+        return getNetBroadcast(addr.getAddress(), writeByBits(mask));
     }
     public static void main(String[] args) {
             System.out.println(genNetMask4(getNetMaskBits("255.255.255.128")));
