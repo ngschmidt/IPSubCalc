@@ -41,6 +41,12 @@ public class IPSubCalc {
         }
         return in;        
     }
+    public static byte[] bitwiseInvert(byte[] in, int len) {
+        byte[] ret = new byte[len];
+        for(int i = 0; i < in.length; i++) ret[i] = in[i];
+        for(int i = 0; i < ret.length; i++) ret[i] ^= 0xFF;
+        return ret;        
+    }    
     public static String join(String[] s, String delim) {
       if (s.length==0) return null;
       String out= s[0];
@@ -168,7 +174,7 @@ public class IPSubCalc {
     }
     public static byte[] getNetBroadcastByteWise(byte[] addr, byte[] mask) {
         byte[] ret = getNetworkAddressBytes(addr, mask);
-        byte[] cmp = bitwiseInvert(mask);
+        byte[] cmp = bitwiseInvert(mask, ret.length);
         return bitwiseOR(ret, cmp);
     }
     public static InetAddress getNetBroadcast(byte[] addr, byte[] mask) {
@@ -187,7 +193,7 @@ public class IPSubCalc {
     }
     public static void main(String[] args) {
         try {
-            System.out.println(getNetBroadcast(InetAddress.getByName("192.168.0.1"), 26));
+            System.out.println(getNetBroadcast(InetAddress.getByName("192.168.0.1"), 20));
         } catch (UnknownHostException ex) {
             Logger.getLogger(IPSubCalc.class.getName()).log(Level.SEVERE, null, ex);
         }
