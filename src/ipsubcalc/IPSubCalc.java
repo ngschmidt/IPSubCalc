@@ -186,7 +186,11 @@ public class IPSubCalc {
         return getNetBroadcast(addr.getAddress(), writeByBits(mask));
     }
     public static void main(String[] args) {
-            System.out.println(genNetMask4(getNetMaskBits("255.255.255.128")));
+        try {
+            System.out.println(getNetBroadcast(InetAddress.getByName("192.168.0.1"), 26));
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(IPSubCalc.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
 }
