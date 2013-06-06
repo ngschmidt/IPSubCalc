@@ -13,8 +13,24 @@ public class IPSubCalc {
 
     public static byte[] bitwiseAnd(byte[] one, byte[] two) {
         if(one.length == two.length) {
-            for(int i=0; i<one.length; i++) {
+            for(int i = 0; i < one.length; i++) {
                 one[i] &= two[i];
+            }
+        }
+        return one;
+    }
+    public static byte[] bitwiseXOR(byte[] one, byte[] two) {
+        if(one.length == two.length) {
+            for(int i = 0; i < one.length; i++) {
+                one[i] ^= two[i];
+            }
+        }
+        return one;
+    }
+    public static byte[] bitwiseOR(byte[] one, byte[] two) {
+        if(one.length == two.length) {
+            for(int i = 0; i < one.length; i++) {
+                one[i] |= two[i];
             }
         }
         return one;
@@ -137,6 +153,13 @@ public class IPSubCalc {
         String[] netmaskstr = new String[netmask.length];
         for(int i = 0; i < netmask.length; i++) netmaskstr[i] = Integer.toHexString(netmaskint[i]);  
         return join(netmaskstr, ":");         
+    }
+    public static byte[] genNetMask(int bits) {
+        return writeByBits(bits);      
+    }
+    public static byte[] getNetBroadcastByteWise(byte[] addr, byte[] mask) {
+        InetAddress ret = getNetworkAddressByteWise(addr, mask);
+        return ret.getAddress();
     }
     public static void main(String[] args) {
             System.out.println(genNetMask4(getNetMaskBits("255.255.255.128")));
