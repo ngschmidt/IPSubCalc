@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 
 /**
  * IP Subnet Calculating Algorithms
- * @author G89390
+ * @author Nicholas Schmidt
  */
 public class IPSubCalc {
 
@@ -74,9 +74,8 @@ public class IPSubCalc {
     }
     public static byte[] writeByBits(int a) {
         int retLen = (int) Math.ceil((double)a/(double)8);
-        System.out.println(retLen);
-        byte[] ret = new byte[retLen+1];
-        for(int i = 0; i <= retLen; i++){
+        byte[] ret = new byte[retLen];
+        for(int i = 0; i < retLen; i++){
             if(a >= 8) {
                 ret[i] = writeByByte(8);
                 a -=8;
@@ -94,6 +93,10 @@ public class IPSubCalc {
     public static void printBytes(byte[] a) {
         for(int i = 0; i < a.length; i++)
             System.out.println(a[i]&0xFF);
+    }
+    public static void printBytesHex(byte[] a) {
+        for(int i = 0; i < a.length; i++)
+            System.out.println(Integer.toHexString(a[i]&0xFF));        
     }
     public static InetAddress getNetworkAddressByteWise(byte[] addr, byte[] netmask) {
         try {
@@ -118,16 +121,25 @@ public class IPSubCalc {
         for(int i = 0; i < arr.length; i++) arrbyte[i] = (byte) arrint[i];
         return countBits(arrbyte);
     }
-    public static String genNetMaskBits(int bits){
+    public static String genNetMask4(int bits){
         byte[] netmask = writeByBits(bits);
+        System.out.println(netmask.length);
         int[] netmaskint = new int[netmask.length];
         for(int i = 0; i < netmask.length; i++) netmaskint[i] = (int)netmask[i]&0xFF;
         String[] netmaskstr = new String[netmask.length];
         for(int i = 0; i < netmask.length; i++) netmaskstr[i] = Integer.toString(netmaskint[i]);  
         return join(netmaskstr, ".");        
     }
+    public static String genNetMaskHex(int bits){
+        byte[] netmask = writeByBits(bits);
+        int[] netmaskint = new int[netmask.length];
+        for(int i = 0; i < netmask.length; i++) netmaskint[i] = (int)netmask[i]&0xFF;
+        String[] netmaskstr = new String[netmask.length];
+        for(int i = 0; i < netmask.length; i++) netmaskstr[i] = Integer.toHexString(netmaskint[i]);  
+        return join(netmaskstr, ":");         
+    }
     public static void main(String[] args) {
-            System.out.println(getNetMaskBits("255.255.255.128"));
+            System.out.println(genNetMask4(getNetMaskBits("255.255.255.128")));
 
     }
 }
