@@ -3,6 +3,7 @@ package ipsubcalc;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.nio.LongBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,29 +14,22 @@ import java.util.logging.Logger;
 public class IPSubCalc {
 
     public static byte[] bitwiseAnd(byte[] one, byte[] two) {
-        printBytes(one);
-        printBytes(two);
-        if(one.length == two.length) {
-            for(int i = 0; i < one.length; i++) {
-                one[i] &= two[i];
-            }
+        byte[] tmp = new byte[one.length];
+        for(int i = 0; i < two.length; i++) tmp[i] = two[i];
+        for(int i = 0; i < one.length; i++) {
+            one[i] &= tmp[i];
         }
-        printBytes(one);
         return one;
     }
     public static byte[] bitwiseXOR(byte[] one, byte[] two) {
-        if(one.length == two.length) {
-            for(int i = 0; i < one.length; i++) {
-                one[i] ^= two[i];
-            }
+        for(int i = 0; i < one.length; i++) {
+            one[i] ^= two[i];
         }
         return one;
     }
     public static byte[] bitwiseOR(byte[] one, byte[] two) {
-        if(one.length == two.length) {
-            for(int i = 0; i < one.length; i++) {
-                one[i] |= two[i];
-            }
+        for(int i = 0; i < one.length; i++) {
+            one[i] |= two[i];
         }
         return one;
     }
@@ -58,19 +52,11 @@ public class IPSubCalc {
         return one;
     } 
     public static long bitwiseSubtractLng(byte[] one, byte[] two){
-        printBytes(one);
-        printBytes(two);
         byte[] tmp = bitwiseSubtract(one,two);
         printBytes(tmp);
-        long ret = 1;
-        if(one.length == two.length) {
-            for(int i = 0; i < one.length; i++) {
-                if( tmp[i] != 0 ) {
-                    ret *= (tmp[i] + 1) & 0xFF;
-                }
-            }
-        }
-        return ret - 2;
+        long temp = 0;
+        for(int i = 0; i < tmp.length; i++) temp += tmp[i] & 0xFF  << (tmp.length - 1 - i) * 8 ;
+        return temp - 1;
     }
     public static String join(String[] s, String delim) {
       if (s.length==0) return null;
@@ -230,7 +216,7 @@ public class IPSubCalc {
     }    
     public static void main(String[] args) {
         try {
-            System.out.println(getNetAddress(InetAddress.getByName("192.168.0.1"), 18));
+            System.out.println(getNetHosts(InetAddress.getByName("192.168.0.67"), 16));
         } catch (UnknownHostException ex) {
             Logger.getLogger(IPSubCalc.class.getName()).log(Level.SEVERE, null, ex);
         }
