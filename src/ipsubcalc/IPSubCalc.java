@@ -13,11 +13,14 @@ import java.util.logging.Logger;
 public class IPSubCalc {
 
     public static byte[] bitwiseAnd(byte[] one, byte[] two) {
+        printBytes(one);
+        printBytes(two);
         if(one.length == two.length) {
             for(int i = 0; i < one.length; i++) {
                 one[i] &= two[i];
             }
         }
+        printBytes(one);
         return one;
     }
     public static byte[] bitwiseXOR(byte[] one, byte[] two) {
@@ -53,14 +56,21 @@ public class IPSubCalc {
             for(int i = 0; i < one.length; i++) one[i] -= two[i];
         }
         return one;
-    }
-    public static long bitwiseSubtractInt(byte[] one, byte[] two){
-        ByteBuffer buf = ByteBuffer.wrap(bitwiseSubtract(one, two));
-        return buf.getInt();
-    }    
+    } 
     public static long bitwiseSubtractLng(byte[] one, byte[] two){
-        ByteBuffer buf = ByteBuffer.wrap(bitwiseSubtract(one, two));
-        return buf.getLong();
+        printBytes(one);
+        printBytes(two);
+        byte[] tmp = bitwiseSubtract(one,two);
+        printBytes(tmp);
+        long ret = 1;
+        if(one.length == two.length) {
+            for(int i = 0; i < one.length; i++) {
+                if( tmp[i] != 0 ) {
+                    ret *= (tmp[i] + 1) & 0xFF;
+                }
+            }
+        }
+        return ret - 2;
     }
     public static String join(String[] s, String delim) {
       if (s.length==0) return null;
@@ -134,12 +144,12 @@ public class IPSubCalc {
         return ret;
     }
     public static void printBytes(byte[] a) {
-        for(int i = 0; i < a.length; i++)
-            System.out.println(a[i]&0xFF);
+        for(int i = 0; i < a.length; i++) System.out.print(a[i]&0xFF);
+        System.out.print("\n");
     }
     public static void printBytesHex(byte[] a) {
-        for(int i = 0; i < a.length; i++)
-            System.out.println(Integer.toHexString(a[i]&0xFF));        
+        for(int i = 0; i < a.length; i++) System.out.print(Integer.toHexString(a[i]&0xFF));   
+        System.out.print("\n");        
     }
 
     public static byte[] getNetAddressBytes(byte[] addr, byte[] mask) {
@@ -207,20 +217,20 @@ public class IPSubCalc {
         return getNetBroadcast(addr.getAddress(), writeByBits(mask));
     }
     public static byte[] getNetHostsBytesWise(byte[] addr, byte[] mask) {
-        return bitwiseSubtract(getNetAddress(addr, mask).getAddress(), getNetBroadcast(addr, mask).getAddress());
+        return bitwiseSubtract(getNetBroadcast(addr, mask).getAddress(),getNetAddress(addr, mask).getAddress());
     }
     public static long getNetHosts(byte[] addr, byte[] mask) {
-        return bitwiseSubtractLng(getNetAddress(addr, mask).getAddress(), getNetBroadcast(addr, mask).getAddress());
+        return bitwiseSubtractLng(getNetBroadcast(addr, mask).getAddress(),getNetAddress(addr, mask).getAddress());
     }
     public static long getNetHosts(InetAddress addr, byte[] mask) {
-        return bitwiseSubtractLng(getNetAddress(addr, mask).getAddress(), getNetBroadcast(addr, mask).getAddress());
+        return bitwiseSubtractLng(getNetBroadcast(addr, mask).getAddress(),getNetAddress(addr, mask).getAddress());
     }
     public static long getNetHosts(InetAddress addr, int mask) {
-        return bitwiseSubtractLng(getNetAddress(addr, mask).getAddress(), getNetBroadcast(addr, mask).getAddress());
+        return bitwiseSubtractLng(getNetBroadcast(addr, mask).getAddress(),getNetAddress(addr, mask).getAddress());
     }    
     public static void main(String[] args) {
         try {
-            System.out.println(getNetHosts(InetAddress.getByName("192.168.0.1"), 20));
+            System.out.println(getNetAddress(InetAddress.getByName("192.168.0.1"), 18));
         } catch (UnknownHostException ex) {
             Logger.getLogger(IPSubCalc.class.getName()).log(Level.SEVERE, null, ex);
         }
