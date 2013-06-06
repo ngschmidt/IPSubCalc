@@ -47,6 +47,12 @@ public class IPSubCalc {
         for(int i = 0; i < ret.length; i++) ret[i] ^= 0xFF;
         return ret;        
     }    
+    public static byte[] bitwiseSubtract(byte[] one, byte[] two){
+        if (one.length == two.length) {
+            for(int i = 0; i < one.length; i++) one[i] -= two[i];
+        }
+        return one;
+    }
     public static String join(String[] s, String delim) {
       if (s.length==0) return null;
       String out= s[0];
